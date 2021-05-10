@@ -1,6 +1,23 @@
-14:00:19 **** Incremental Build of configuration Debug for project Full_TEST ****
+15:43:32 **** Incremental Build of configuration Debug for project Full_TEST ****
 make -j12 all 
-make: Nothing to be done for 'all'.
+Building file: ../Core/Src/main.c
+Invoking: MCU GCC Compiler
+C:\Users\troch\Documents\GitHub\Multifunctionele-high-power-zaklamp\Programma\Full_TEST\Debug
+arm-none-eabi-gcc -mcpu=cortex-m7 -mthumb -mfloat-abi=hard -mfpu=fpv5-sp-d16 -DUSE_HAL_DRIVER -DSTM32F746xx -I"C:/Users/troch/Documents/GitHub/Multifunctionele-high-power-zaklamp/Programma/Full_TEST/Core/Inc" -I"C:/Users/troch/Documents/GitHub/Multifunctionele-high-power-zaklamp/Programma/Full_TEST/Drivers/STM32F7xx_HAL_Driver/Inc" -I"C:/Users/troch/Documents/GitHub/Multifunctionele-high-power-zaklamp/Programma/Full_TEST/Drivers/STM32F7xx_HAL_Driver/Inc/Legacy" -I"C:/Users/troch/Documents/GitHub/Multifunctionele-high-power-zaklamp/Programma/Full_TEST/Drivers/CMSIS/Device/ST/STM32F7xx/Include" -I"C:/Users/troch/Documents/GitHub/Multifunctionele-high-power-zaklamp/Programma/Full_TEST/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" -o "Core/Src/main.o" "../Core/Src/main.c"
+Finished building: ../Core/Src/main.c
+ 
+Building target: Full_TEST.elf
+Invoking: MCU GCC Linker
+arm-none-eabi-gcc -mcpu=cortex-m7 -mthumb -mfloat-abi=hard -mfpu=fpv5-sp-d16 -specs=nosys.specs -specs=nano.specs -T"../STM32F746NGHx_FLASH.ld" -Wl,-Map=output.map -Wl,--gc-sections -o "Full_TEST.elf" @"objects.list"   -lm
+Finished building target: Full_TEST.elf
+ 
+make --no-print-directory post-build
+Generating hex and Printing size information:
+arm-none-eabi-objcopy -O ihex "Full_TEST.elf" "Full_TEST.hex"
+arm-none-eabi-size "Full_TEST.elf"
+   text	   data	    bss	    dec	    hex	filename
+  10220	     20	   1780	  12020	   2ef4	Full_TEST.elf
+ 
 
-14:00:19 Build Finished (took 381ms)
+15:43:36 Build Finished (took 3s.872ms)
 
