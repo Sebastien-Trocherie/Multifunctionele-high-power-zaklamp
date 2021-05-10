@@ -22,7 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "Morse.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -145,19 +145,24 @@ int main(void)
 	}
 	if(MODE == Medium)
 	{
-		TIM2->CCR1 = 120; 							//Set Duty Cycle to 25%
+		TIM2->CCR1 = 120; 							//Set Duty Cycle to 50%
 	}
 	if(MODE == High)
 	{
-		TIM2->CCR1 = 180; 							//Set Duty Cycle to 25%
+		TIM2->CCR1 = 180; 							//Set Duty Cycle to 75%
 	}
 	if(MODE == Turbo)
 	{
-		TIM2->CCR1 = 240; 							//Set Duty Cycle to 25%
+		TIM2->CCR1 = 240; 							//Set Duty Cycle to 100%
 	}
-	if(MODE == MORSE)
+	if(MODE > Turbo)
 	{
-
+		HAL_GPIO_WritePin(TEST_GPIO_Port, TEST_Pin, GPIO_PIN_SET);
+		vMorseConvert(99);	//c
+		vMorseConvert(100);	//d
+		vMorseConvert(10);
+		HAL_GPIO_WritePin(TEST_GPIO_Port, TEST_Pin, GPIO_PIN_RESET);
+		HAL_Delay(1000);
 	}
   }
   /* USER CODE END 3 */
