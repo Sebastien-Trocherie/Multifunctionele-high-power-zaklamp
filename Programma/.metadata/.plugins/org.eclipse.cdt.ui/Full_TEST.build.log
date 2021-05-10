@@ -1,4 +1,4 @@
-17:02:42 **** Incremental Build of configuration Debug for project Full_TEST ****
+21:21:09 **** Incremental Build of configuration Debug for project Full_TEST ****
 make -j12 all 
 Building file: ../Core/Src/main.c
 Invoking: MCU GCC Compiler
@@ -16,8 +16,8 @@ Generating hex and Printing size information:
 arm-none-eabi-objcopy -O ihex "Full_TEST.elf" "Full_TEST.hex"
 arm-none-eabi-size "Full_TEST.elf"
    text	   data	    bss	    dec	    hex	filename
-  11208	     20	   1916	  13144	   3358	Full_TEST.elf
+  11328	     24	   1912	  13264	   33d0	Full_TEST.elf
  
 
-17:02:45 Build Finished (took 3s.700ms)
+21:21:14 Build Finished (took 4s.358ms)
 

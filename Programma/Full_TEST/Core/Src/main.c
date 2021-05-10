@@ -40,8 +40,8 @@
 #define Low 1		//25% power
 #define Medium 2	//50% power
 #define High 3		//75% power
-#define Turbo 4		//100% power
-#define MORSE 5
+#define Turbo 5		//100% power
+#define MORSE 4
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -51,7 +51,10 @@ TIM_HandleTypeDef htim2;
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
-uint8_t MODE = Off; 	//Determines the brightness level
+uint8_t MODE = Off; 		//Determines the brightness level
+uint8_t lastMode = Off; 	//Determines the brightness level
+int8_t pulse = 0; 			//Determines the brightness level
+uint16_t lastTime = 350;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -135,6 +138,21 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	if(lastMode != MODE)
+	{
+		if( ( ( HAL_GetTick() - lastTime ) < 300 )  && pulse > 0)
+		{
+			pulse++;
+			if(pulse == 2)
+			{
+				MODE = Turbo;
+				pulse = -1;
+			}
+		}
+		lastTime = HAL_GetTick();
+		lastMode = MODE;
+		pulse++;
+	}
 	if(MODE == Off)
 	{
 		TIM2->CCR1 = 0; 							//Set Duty Cycle to 0%
@@ -151,11 +169,12 @@ int main(void)
 	{
 		TIM2->CCR1 = 180; 							//Set Duty Cycle to 75%
 	}
-	if(MODE == Turbo)
+	if( ( MODE == Turbo ) && ( pulse == 0 ) )
 	{
 		TIM2->CCR1 = 240; 							//Set Duty Cycle to 100%
+		pulse = 0;
 	}
-	if(MODE > Turbo)
+	if(MODE == MORSE)
 	{
 		HAL_GPIO_WritePin(TEST_GPIO_Port, TEST_Pin, GPIO_PIN_SET);
 		vMorseConvert(99);	//c
@@ -163,6 +182,10 @@ int main(void)
 		vMorseConvert(10);
 		HAL_GPIO_WritePin(TEST_GPIO_Port, TEST_Pin, GPIO_PIN_RESET);
 		HAL_Delay(1000);
+	}
+	if(MODE > Turbo)
+	{
+		MODE = Off;
 	}
   }
   /* USER CODE END 3 */
