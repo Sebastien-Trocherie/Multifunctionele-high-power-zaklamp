@@ -9,13 +9,16 @@
 #include "main.h"
 #include "Morse.h"
 
-void vMorseConvert( uint8_t data )
+uint8_t ucMorseConvert( uint8_t data )
 {
 	static uint8_t rx_lenght = 0;
 	static uint8_t rx_data[128];
+	static uint8_t ucStatus = 0;
 
 	if(data != 10)
 	{
+		HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
+
 		rx_data[rx_lenght] = data;
 		rx_lenght++;
 	}

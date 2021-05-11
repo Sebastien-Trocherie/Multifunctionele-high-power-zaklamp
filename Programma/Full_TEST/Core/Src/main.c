@@ -49,12 +49,19 @@
 TIM_HandleTypeDef htim2;
 
 UART_HandleTypeDef huart1;
+UART_HandleTypeDef huart6;
 
 /* USER CODE BEGIN PV */
-uint8_t MODE = Off; 		//Determines the brightness level
-uint8_t lastMode = Off; 	//Determines the brightness level
-int8_t pulse = 0; 			//Determines the brightness level
-uint16_t lastTime = 350;
+uint8_t ucMODE = Off; 		//Determines the brightness level
+uint8_t uclastMode = Off; 	//Determines the brightness level
+int8_t iPulse = 1; 			//Determines the brightness level
+uint16_t usLastTime = 350;
+
+uint8_t ucCharBuffer = 0;		//
+uint8_t ucDataArrived = 0;
+/*uint8_t ucSize = 0;
+uint8_t ucCharStock[128];
+uint8_t ucDataArrived = 0;*/
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -62,6 +69,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_USART1_UART_Init(void);
+static void MX_USART6_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -127,8 +135,11 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM2_Init();
   MX_USART1_UART_Init();
+  MX_USART6_UART_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);	//Start PWM generation
+  HAL_UART_Receive_IT( &huart6, &ucCharBuffer, 1);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -138,54 +149,65 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	if(lastMode != MODE)
+	if(uclastMode != ucMODE)
 	{
-		if( ( ( HAL_GetTick() - lastTime ) < 300 )  && pulse > 0)
+		if( ( ( HAL_GetTick() - usLastTime ) < 300 )  && iPulse > 0)
 		{
-			pulse++;
-			if(pulse == 2)
-			{
-				MODE = Turbo;
-				pulse = -1;
-			}
+			ucMODE = Turbo;
+			iPulse = -1;
 		}
-		lastTime = HAL_GetTick();
-		lastMode = MODE;
-		pulse++;
+
+		usLastTime = HAL_GetTick();
+		uclastMode = ucMODE;
+		iPulse++;
 	}
-	if(MODE == Off)
+
+	if(ucMODE == Off)
 	{
 		TIM2->CCR1 = 0; 							//Set Duty Cycle to 0%
 	}
-	if(MODE == Low)
+	if(ucMODE == Low)
 	{
 		TIM2->CCR1 = 60; 							//Set Duty Cycle to 25%
 	}
-	if(MODE == Medium)
+	if(ucMODE == Medium)
 	{
 		TIM2->CCR1 = 120; 							//Set Duty Cycle to 50%
 	}
-	if(MODE == High)
+	if(ucMODE == High)
 	{
 		TIM2->CCR1 = 180; 							//Set Duty Cycle to 75%
 	}
-	if( ( MODE == Turbo ) && ( pulse == 0 ) )
+	if(ucMODE == MORSE)
+	{
+
+		HAL_GPIO_WritePin(TEST_GPIO_Port, TEST_Pin, GPIO_PIN_SET);
+		/*vMorseConvert(99);	//c
+		vMorseConvert(100);	//d
+		vMorseConvert(10);*/
+		if(ucDataArrived == 1)
+		{
+			vMorseConvert(ucCharBuffer);
+			printf("test\r\n");
+			printf("%c\r\n", ucCharBuffer);
+		}
+
+		HAL_GPIO_WritePin(TEST_GPIO_Port, TEST_Pin, GPIO_PIN_RESET);
+		HAL_Delay(500);
+	}
+	if( ( ucMODE == Turbo ) && ( iPulse == 0 ) )
 	{
 		TIM2->CCR1 = 240; 							//Set Duty Cycle to 100%
-		pulse = 0;
 	}
-	if(MODE == MORSE)
+	if( ( ucMODE == Turbo ) && (iPulse != 0 ) )
 	{
-		HAL_GPIO_WritePin(TEST_GPIO_Port, TEST_Pin, GPIO_PIN_SET);
-		vMorseConvert(99);	//c
-		vMorseConvert(100);	//d
-		vMorseConvert(10);
-		HAL_GPIO_WritePin(TEST_GPIO_Port, TEST_Pin, GPIO_PIN_RESET);
-		HAL_Delay(1000);
+		ucMODE = Off;
+		iPulse = 0;
 	}
-	if(MODE > Turbo)
+	if( ucMODE > Turbo )
 	{
-		MODE = Off;
+		ucMODE = Off;
+		iPulse = 0;
 	}
   }
   /* USER CODE END 3 */
@@ -242,8 +264,9 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_USART1;
+  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_USART1|RCC_PERIPHCLK_USART6;
   PeriphClkInitStruct.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
+  PeriphClkInitStruct.Usart6ClockSelection = RCC_USART6CLKSOURCE_PCLK2;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -345,6 +368,41 @@ static void MX_USART1_UART_Init(void)
 }
 
 /**
+  * @brief USART6 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART6_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART6_Init 0 */
+
+  /* USER CODE END USART6_Init 0 */
+
+  /* USER CODE BEGIN USART6_Init 1 */
+
+  /* USER CODE END USART6_Init 1 */
+  huart6.Instance = USART6;
+  huart6.Init.BaudRate = 9600;
+  huart6.Init.WordLength = UART_WORDLENGTH_8B;
+  huart6.Init.StopBits = UART_STOPBITS_1;
+  huart6.Init.Parity = UART_PARITY_NONE;
+  huart6.Init.Mode = UART_MODE_TX_RX;
+  huart6.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart6.Init.OverSampling = UART_OVERSAMPLING_16;
+  huart6.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+  huart6.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  if (HAL_UART_Init(&huart6) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART6_Init 2 */
+
+  /* USER CODE END USART6_Init 2 */
+
+}
+
+/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
@@ -354,6 +412,7 @@ static void MX_GPIO_Init(void)
   GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOG_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOI_CLK_ENABLE();
@@ -388,8 +447,26 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 	if(GPIO_Pin == Button_Pin)
 	{
-		MODE++;
+		ucMODE++;
 	}
+}
+
+void HAL_UART_RxCpltCallback( UART_HandleTypeDef *huart )
+{
+
+	HAL_UART_Receive_IT( &huart6, &ucCharBuffer, 1);
+	ucDataArrived = 1;
+	//HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
+
+	/*if( ucCharBuffer == '\n')
+	{
+		ucDataArrived = 1;
+	}
+	else
+	{
+		ucCharStock[ucSize] = ucCharBuffer;
+		ucSize++;
+	}*/
 }
 /* USER CODE END 4 */
 

@@ -1,10 +1,10 @@
-21:21:09 **** Incremental Build of configuration Debug for project Full_TEST ****
+18:35:45 **** Incremental Build of configuration Debug for project Full_TEST ****
 make -j12 all 
-Building file: ../Core/Src/main.c
+Building file: ../Core/Src/Morse.c
 Invoking: MCU GCC Compiler
 C:\Users\troch\Documents\GitHub\Multifunctionele-high-power-zaklamp\Programma\Full_TEST\Debug
-arm-none-eabi-gcc -mcpu=cortex-m7 -mthumb -mfloat-abi=hard -mfpu=fpv5-sp-d16 -DUSE_HAL_DRIVER -DSTM32F746xx -I"C:/Users/troch/Documents/GitHub/Multifunctionele-high-power-zaklamp/Programma/Full_TEST/Core/Inc" -I"C:/Users/troch/Documents/GitHub/Multifunctionele-high-power-zaklamp/Programma/Full_TEST/Drivers/STM32F7xx_HAL_Driver/Inc" -I"C:/Users/troch/Documents/GitHub/Multifunctionele-high-power-zaklamp/Programma/Full_TEST/Drivers/STM32F7xx_HAL_Driver/Inc/Legacy" -I"C:/Users/troch/Documents/GitHub/Multifunctionele-high-power-zaklamp/Programma/Full_TEST/Drivers/CMSIS/Device/ST/STM32F7xx/Include" -I"C:/Users/troch/Documents/GitHub/Multifunctionele-high-power-zaklamp/Programma/Full_TEST/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" -o "Core/Src/main.o" "../Core/Src/main.c"
-Finished building: ../Core/Src/main.c
+arm-none-eabi-gcc -mcpu=cortex-m7 -mthumb -mfloat-abi=hard -mfpu=fpv5-sp-d16 -DUSE_HAL_DRIVER -DSTM32F746xx -I"C:/Users/troch/Documents/GitHub/Multifunctionele-high-power-zaklamp/Programma/Full_TEST/Core/Inc" -I"C:/Users/troch/Documents/GitHub/Multifunctionele-high-power-zaklamp/Programma/Full_TEST/Drivers/STM32F7xx_HAL_Driver/Inc" -I"C:/Users/troch/Documents/GitHub/Multifunctionele-high-power-zaklamp/Programma/Full_TEST/Drivers/STM32F7xx_HAL_Driver/Inc/Legacy" -I"C:/Users/troch/Documents/GitHub/Multifunctionele-high-power-zaklamp/Programma/Full_TEST/Drivers/CMSIS/Device/ST/STM32F7xx/Include" -I"C:/Users/troch/Documents/GitHub/Multifunctionele-high-power-zaklamp/Programma/Full_TEST/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Core/Src/Morse.d" -MT"Core/Src/Morse.o" -o "Core/Src/Morse.o" "../Core/Src/Morse.c"
+Finished building: ../Core/Src/Morse.c
  
 Building target: Full_TEST.elf
 Invoking: MCU GCC Linker
@@ -16,8 +16,8 @@ Generating hex and Printing size information:
 arm-none-eabi-objcopy -O ihex "Full_TEST.elf" "Full_TEST.hex"
 arm-none-eabi-size "Full_TEST.elf"
    text	   data	    bss	    dec	    hex	filename
-  11328	     24	   1912	  13264	   33d0	Full_TEST.elf
+  17532	    124	   2068	  19724	   4d0c	Full_TEST.elf
  
 
-21:21:14 Build Finished (took 4s.358ms)
+18:35:49 Build Finished (took 3s.455ms)
 
