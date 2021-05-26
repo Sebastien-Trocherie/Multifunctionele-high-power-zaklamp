@@ -48,7 +48,6 @@
 
 TIM_HandleTypeDef htim2;
 
-UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart6;
 
 /* USER CODE BEGIN PV */
@@ -59,8 +58,10 @@ uint16_t usLastTime = 350;
 
 uint8_t ucCharBuffer = 0;		//
 uint8_t ucDataArrived = 0;
-/*uint8_t ucSize = 0;
-uint8_t ucCharStock[128];
+uint8_t testBuf[128];
+uint8_t charBuf = 0;
+uint8_t ucSize = 0;
+/*uint8_t ucCharStock[128];
 uint8_t ucDataArrived = 0;*/
 /* USER CODE END PV */
 
@@ -68,7 +69,6 @@ uint8_t ucDataArrived = 0;*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_TIM2_Init(void);
-static void MX_USART1_UART_Init(void);
 static void MX_USART6_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
@@ -76,33 +76,7 @@ static void MX_USART6_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-#include <errno.h>
-#include <sys/stat.h>
-#include <sys/times.h>
-#include <sys/unistd.h>
-int _write(int file, char *ptr, int len) {
-    HAL_StatusTypeDef xStatus;
-    switch (file) {
-    case STDOUT_FILENO: /*stdout*/
-		xStatus = HAL_UART_Transmit(&huart1, (uint8_t*)ptr, len, HAL_MAX_DELAY);
-		if (xStatus != HAL_OK) {
-			errno = EIO;
-			return -1;
-		}
-        break;
-    case STDERR_FILENO: /* stderr */
-		xStatus = HAL_UART_Transmit(&huart1, (uint8_t*)ptr, len, HAL_MAX_DELAY);
-		if (xStatus != HAL_OK) {
-			errno = EIO;
-			return -1;
-		}
-        break;
-    default:
-        errno = EBADF;
-        return -1;
-    }
-    return len;
-}
+
 /* USER CODE END 0 */
 
 /**
@@ -134,7 +108,6 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_TIM2_Init();
-  MX_USART1_UART_Init();
   MX_USART6_UART_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);	//Start PWM generation
@@ -151,15 +124,28 @@ int main(void)
     /* USER CODE BEGIN 3 */
 	if(uclastMode != ucMODE)
 	{
+		HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
 		if( ( ( HAL_GetTick() - usLastTime ) < 300 )  && iPulse > 0)
 		{
 			ucMODE = Turbo;
 			iPulse = -1;
 		}
+		else
+		{
+			if(uclastMode == MORSE)
+			{
+				for(uint8_t x = 120; x > 0; x--)
+				{
+					TIM2->CCR1 = x;
+					HAL_Delay(8);
+				}
+			}
+		}
 
 		usLastTime = HAL_GetTick();
 		uclastMode = ucMODE;
 		iPulse++;
+		TIM2->CCR1 = 0;
 	}
 
 	if(ucMODE == Off)
@@ -181,19 +167,18 @@ int main(void)
 	if(ucMODE == MORSE)
 	{
 
-		HAL_GPIO_WritePin(TEST_GPIO_Port, TEST_Pin, GPIO_PIN_SET);
-		/*vMorseConvert(99);	//c
-		vMorseConvert(100);	//d
-		vMorseConvert(10);*/
+		//HAL_GPIO_WritePin(TEST_GPIO_Port, TEST_Pin, GPIO_PIN_SET);
+
 		if(ucDataArrived == 1)
 		{
-			vMorseConvert(ucCharBuffer);
-			printf("test\r\n");
-			printf("%c\r\n", ucCharBuffer);
+			ucMorseConvert(ucSize, testBuf);
+			ucDataArrived = 0;
+			ucSize = 0;
+			//printf("test\r\n");
+			//printf("%c\r\n", ucCharBuffer);
 		}
 
-		HAL_GPIO_WritePin(TEST_GPIO_Port, TEST_Pin, GPIO_PIN_RESET);
-		HAL_Delay(500);
+		//HAL_GPIO_WritePin(TEST_GPIO_Port, TEST_Pin, GPIO_PIN_RESET);
 	}
 	if( ( ucMODE == Turbo ) && ( iPulse == 0 ) )
 	{
@@ -264,8 +249,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_USART1|RCC_PERIPHCLK_USART6;
-  PeriphClkInitStruct.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
+  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_USART6;
   PeriphClkInitStruct.Usart6ClockSelection = RCC_USART6CLKSOURCE_PCLK2;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
   {
@@ -333,41 +317,6 @@ static void MX_TIM2_Init(void)
 }
 
 /**
-  * @brief USART1 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_USART1_UART_Init(void)
-{
-
-  /* USER CODE BEGIN USART1_Init 0 */
-
-  /* USER CODE END USART1_Init 0 */
-
-  /* USER CODE BEGIN USART1_Init 1 */
-
-  /* USER CODE END USART1_Init 1 */
-  huart1.Instance = USART1;
-  huart1.Init.BaudRate = 115200;
-  huart1.Init.WordLength = UART_WORDLENGTH_8B;
-  huart1.Init.StopBits = UART_STOPBITS_1;
-  huart1.Init.Parity = UART_PARITY_NONE;
-  huart1.Init.Mode = UART_MODE_TX_RX;
-  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
-  huart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-  huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-  if (HAL_UART_Init(&huart1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN USART1_Init 2 */
-
-  /* USER CODE END USART1_Init 2 */
-
-}
-
-/**
   * @brief USART6 Initialization Function
   * @param None
   * @retval None
@@ -413,14 +362,24 @@ static void MX_GPIO_Init(void)
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOG_CLK_ENABLE();
-  __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
+  __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOI_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOH_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(CHECK_GPIO_Port, CHECK_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOI, TEST_Pin|LED_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin : CHECK_Pin */
+  GPIO_InitStruct.Pin = CHECK_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(CHECK_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : TEST_Pin LED_Pin */
   GPIO_InitStruct.Pin = TEST_Pin|LED_Pin;
@@ -428,6 +387,14 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOI, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PA9 */
+  GPIO_InitStruct.Pin = GPIO_PIN_9;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+  GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pin : Button_Pin */
   GPIO_InitStruct.Pin = Button_Pin;
@@ -444,7 +411,7 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-
+	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
 	if(GPIO_Pin == Button_Pin)
 	{
 		ucMODE++;
@@ -454,19 +421,20 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 void HAL_UART_RxCpltCallback( UART_HandleTypeDef *huart )
 {
 
-	HAL_UART_Receive_IT( &huart6, &ucCharBuffer, 1);
-	ucDataArrived = 1;
+	//HAL_UART_Receive_IT( &huart6, &ucCharBuffer, 1);
+	HAL_UART_Receive_IT( &huart6, &charBuf, 1);
+	//ucDataArrived = 1;
 	//HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
 
-	/*if( ucCharBuffer == '\n')
+	if( charBuf == '\n')
 	{
 		ucDataArrived = 1;
 	}
 	else
 	{
-		ucCharStock[ucSize] = ucCharBuffer;
+		testBuf[ucSize] = charBuf;
 		ucSize++;
-	}*/
+	}
 }
 /* USER CODE END 4 */
 

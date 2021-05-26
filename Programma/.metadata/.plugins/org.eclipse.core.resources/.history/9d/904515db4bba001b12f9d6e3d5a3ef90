@@ -1,0 +1,14 @@
+/*
+ * morse.h
+ *
+ *  Created on: 15 mei 2021
+ *      Author: troch
+ */
+
+#ifndef INC_MORSE_H_
+#define INC_MORSE_H_
+
+void vMorseConvert( uint8_t *data, uint8_t lenght );
+void vMorseSend( uint8_t code, uint8_t lenght );
+void vMorseClearBuf(uint8_t *dataBuf, uint8_t *dataSize);
+#endif /* INC_MORSE_H_ */

@@ -1,23 +1,6 @@
-18:35:45 **** Incremental Build of configuration Debug for project Full_TEST ****
+17:46:51 **** Build of configuration Debug for project Full_TEST ****
 make -j12 all 
-Building file: ../Core/Src/Morse.c
-Invoking: MCU GCC Compiler
-C:\Users\troch\Documents\GitHub\Multifunctionele-high-power-zaklamp\Programma\Full_TEST\Debug
-arm-none-eabi-gcc -mcpu=cortex-m7 -mthumb -mfloat-abi=hard -mfpu=fpv5-sp-d16 -DUSE_HAL_DRIVER -DSTM32F746xx -I"C:/Users/troch/Documents/GitHub/Multifunctionele-high-power-zaklamp/Programma/Full_TEST/Core/Inc" -I"C:/Users/troch/Documents/GitHub/Multifunctionele-high-power-zaklamp/Programma/Full_TEST/Drivers/STM32F7xx_HAL_Driver/Inc" -I"C:/Users/troch/Documents/GitHub/Multifunctionele-high-power-zaklamp/Programma/Full_TEST/Drivers/STM32F7xx_HAL_Driver/Inc/Legacy" -I"C:/Users/troch/Documents/GitHub/Multifunctionele-high-power-zaklamp/Programma/Full_TEST/Drivers/CMSIS/Device/ST/STM32F7xx/Include" -I"C:/Users/troch/Documents/GitHub/Multifunctionele-high-power-zaklamp/Programma/Full_TEST/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Core/Src/Morse.d" -MT"Core/Src/Morse.o" -o "Core/Src/Morse.o" "../Core/Src/Morse.c"
-Finished building: ../Core/Src/Morse.c
- 
-Building target: Full_TEST.elf
-Invoking: MCU GCC Linker
-arm-none-eabi-gcc -mcpu=cortex-m7 -mthumb -mfloat-abi=hard -mfpu=fpv5-sp-d16 -specs=nosys.specs -specs=nano.specs -T"../STM32F746NGHx_FLASH.ld" -Wl,-Map=output.map -Wl,--gc-sections -o "Full_TEST.elf" @"objects.list"   -lm
-Finished building target: Full_TEST.elf
- 
-make --no-print-directory post-build
-Generating hex and Printing size information:
-arm-none-eabi-objcopy -O ihex "Full_TEST.elf" "Full_TEST.hex"
-arm-none-eabi-size "Full_TEST.elf"
-   text	   data	    bss	    dec	    hex	filename
-  17532	    124	   2068	  19724	   4d0c	Full_TEST.elf
- 
+make: Nothing to be done for 'all'.
 
-18:35:49 Build Finished (took 3s.455ms)
+17:46:52 Build Finished (took 302ms)
 

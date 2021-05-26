@@ -9,25 +9,12 @@
 #include "main.h"
 #include "Morse.h"
 
-uint8_t ucMorseConvert( uint8_t data )
+void ucMorseConvert( uint8_t clenght, uint8_t *data )
 {
-	static uint8_t rx_lenght = 0;
-	static uint8_t rx_data[128];
-	static uint8_t ucStatus = 0;
-
-	if(data != 10)
+	for(uint8_t i = 0; i < clenght; i++)
 	{
-		HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
-
-		rx_data[rx_lenght] = data;
-		rx_lenght++;
-	}
-	else
-	{
-		for(uint8_t i = 0; i < rx_lenght; i++)
+		switch (data[i])
 		{
-			switch (rx_data[i])
-			{
 				    case 97:			//a
 				    	vMorseSend(0b10, 2);
 				        break;
@@ -142,26 +129,31 @@ uint8_t ucMorseConvert( uint8_t data )
 				    default: vMorseSend(0,0);
 				    break;
 			}
-		}
-		rx_lenght = 0;
 	}
 }
 
 void vMorseSend( uint8_t code, uint8_t lenght )
 {
-	for(int i = (lenght - 1) ; i >= 0; i--)
+	HAL_GPIO_WritePin(CHECK_GPIO_Port, CHECK_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
+
+
+	for(uint8_t i = lenght; i > 0; i--)
 	{
-		if((code >> i) & 0x01)
+		if((code >> (i - 1)) & 0x01)
 		{
+			HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
 			TIM2->CCR1 = 160;
 			HAL_Delay(300);			//DOT = 1 time unit
 		}
 		else
 		{
+			HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
 			TIM2->CCR1 = 0;
 			HAL_Delay(900);			//DASH = 3 time units
 		}
 	}
+	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
 	TIM2->CCR1 = 0;
 	HAL_Delay(900);					//Space between letters = 3 time units
 }

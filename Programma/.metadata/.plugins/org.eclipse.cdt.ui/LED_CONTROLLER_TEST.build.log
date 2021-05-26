@@ -1,0 +1,6 @@
+13:00:26 **** Incremental Build of configuration Debug for project LED_CONTROLLER_TEST ****
+make -j12 all 
+make: Nothing to be done for 'all'.
+
+13:00:27 Build Finished (took 635ms)
+

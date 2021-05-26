@@ -1,0 +1,23 @@
+13:27:00 **** Incremental Build of configuration Debug for project LED_CONTROLLER_FINAL ****
+make -j12 all 
+Building file: ../Core/Src/main.c
+Invoking: MCU GCC Compiler
+C:\Users\troch\Documents\GitHub\Multifunctionele-high-power-zaklamp\Programma\LED_CONTROLLER_FINAL\Debug
+arm-none-eabi-gcc -mcpu=cortex-m0plus -mthumb -mfloat-abi=soft -DUSE_HAL_DRIVER -DSTM32L081xx -I"C:/Users/troch/Documents/GitHub/Multifunctionele-high-power-zaklamp/Programma/LED_CONTROLLER_FINAL/Core/Inc" -I"C:/Users/troch/Documents/GitHub/Multifunctionele-high-power-zaklamp/Programma/LED_CONTROLLER_FINAL/Drivers/STM32L0xx_HAL_Driver/Inc" -I"C:/Users/troch/Documents/GitHub/Multifunctionele-high-power-zaklamp/Programma/LED_CONTROLLER_FINAL/Drivers/STM32L0xx_HAL_Driver/Inc/Legacy" -I"C:/Users/troch/Documents/GitHub/Multifunctionele-high-power-zaklamp/Programma/LED_CONTROLLER_FINAL/Drivers/CMSIS/Device/ST/STM32L0xx/Include" -I"C:/Users/troch/Documents/GitHub/Multifunctionele-high-power-zaklamp/Programma/LED_CONTROLLER_FINAL/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" -o "Core/Src/main.o" "../Core/Src/main.c"
+Finished building: ../Core/Src/main.c
+ 
+Building target: LED_CONTROLLER_FINAL.elf
+Invoking: MCU GCC Linker
+arm-none-eabi-gcc -mcpu=cortex-m0plus -mthumb -mfloat-abi=soft -specs=nosys.specs -specs=nano.specs -T"../STM32L081KZTx_FLASH.ld" -Wl,-Map=output.map -Wl,--gc-sections -o "LED_CONTROLLER_FINAL.elf" @"objects.list"   -lm
+Finished building target: LED_CONTROLLER_FINAL.elf
+ 
+make --no-print-directory post-build
+Generating hex and Printing size information:
+arm-none-eabi-objcopy -O ihex "LED_CONTROLLER_FINAL.elf" "LED_CONTROLLER_FINAL.hex"
+arm-none-eabi-size "LED_CONTROLLER_FINAL.elf"
+   text	   data	    bss	    dec	    hex	filename
+  12180	     24	   2056	  14260	   37b4	LED_CONTROLLER_FINAL.elf
+ 
+
+13:27:03 Build Finished (took 3s.223ms)
+
